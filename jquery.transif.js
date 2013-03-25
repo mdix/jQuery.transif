@@ -1,8 +1,9 @@
 (function($) {
     $.fn.transif = function(animationConfigObject, animationSpeed, callback) {
         this._animationConfigObject = animationConfigObject;
-        this._animationSpeed = animationSpeed;
+        this._animationSpeed        = animationSpeed;
         this._callback = callback;
+        this.animated  = false;
         
         this.applyAppropriateAnimationTechnique = function() {
             if (jQuery.data(document, 'supportsCssTransitions')) {
@@ -20,8 +21,22 @@
                     this._callback
                 );
             }
+            this.setAnimatedState();
         };
-        
+
+        this.setAnimatedState = function() {
+            var self = this;
+            this.animated = true;
+
+            window.setTimeout(function() {
+                self.animated = false;
+            }, this._animationSpeed);
+        };
+
+        this.isAnimated = function() {
+            return this.animated;
+        };
+
         this.applyAppropriateAnimationTechnique();
     };
     
@@ -36,7 +51,7 @@
         }
 
         // Tests for vendor specific prop
-        v = ['Moz', 'Webkit', 'Khtml', 'O', 'ms'],
+        v = ['Moz', 'Webkit', 'Khtml', 'O', 'ms'];
         p = p.charAt(0).toUpperCase() + p.substr(1);
         for (var i = 0; i < v.length; i++) {
             if (typeof s[v[i] + p] == 'string') { 
@@ -45,6 +60,5 @@
             }
         }
         jQuery.data(document, 'supportsCssTransitions', false);
-        return;
     }());
 }(jQuery));
